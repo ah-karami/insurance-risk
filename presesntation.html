@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سامانه تشخیص ریسک بیمه‌ای مسئولیت کارفرما</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-soft: #dbeafe;
+    --accent: #0ea5e9;
+    --text: #1e293b;
+    --text-soft: #475569;
+    --text-mute: #94a3b8;
+    --border: #e2e8f0;
+    --card-soft: #f8fafc;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+    --shadow: 0 10px 30px rgba(15, 23, 42, 0.07);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Vazirmatn', 'Tahoma', sans-serif;
+    background: #f1f5f9;
+    color: var(--text);
+    line-height: 1.85;
+    font-size: 15.5px;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0ea5e9 100%);
+    color: #fff;
+    padding: 70px 24px 90px;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%; right: -20%;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(14,165,233,0.35), transparent 70%);
+    border-radius: 50%;
+  }
+  .hero-inner { position: relative; max-width: 1050px; margin: 0 auto; z-index: 1; }
+  .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #e0f2fe;
+    padding: 5px 14px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: clamp(24px, 3.6vw, 40px);
+    font-weight: 800;
+    line-height: 1.45;
+    margin-bottom: 14px;
+  }
+  .hero h1 span {
+    background: linear-gradient(90deg, #38bdf8, #a5f3fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p.lead {
+    font-size: clamp(14px, 1.7vw, 17px);
+    color: #cbd5e1;
+    max-width: 720px;
+    margin-bottom: 32px;
+  }
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px;
+    margin-top: 32px;
+  }
+  .stat {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 14px;
+    padding: 16px 18px;
+  }
+  .stat .num { font-size: 22px; font-weight: 800; display: block; margin-bottom: 4px; }
+  .stat .lbl { font-size: 12.5px; color: #cbd5e1; }
+
+  /* ---------- Container ---------- */
+  .container {
+    max-width: 1050px;
+    margin: -55px auto 70px;
+    padding: 0 24px;
+    position: relative;
+    z-index: 2;
+  }
+
+  section.card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 32px clamp(20px, 3.5vw, 40px);
+    margin-bottom: 22px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+  .section-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: #fff;
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 15px;
+    margin-bottom: 14px;
+  }
+  h2 {
+    font-size: clamp(18px, 2.3vw, 23px);
+    font-weight: 800;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  h3 {
+    font-size: 16.5px;
+    font-weight: 700;
+    margin: 22px 0 10px;
+    padding-right: 12px;
+    border-right: 4px solid var(--accent);
+    line-height: 1.6;
+  }
+  p { margin-bottom: 12px; color: var(--text-soft); }
+  strong { color: var(--text); }
+
+  ul, ol { margin: 0 22px 14px 0; padding-right: 6px; }
+  li { margin-bottom: 6px; color: var(--text-soft); }
+  li::marker { color: var(--accent); }
+
+  .callout {
+    background: linear-gradient(135deg, #eff6ff, #e0f2fe);
+    border-right: 4px solid var(--primary);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 16px 0;
+    color: #1e3a8a;
+    font-weight: 500;
+  }
+  .callout.warn {
+    background: linear-gradient(135deg, #fffbeb, #fef3c7);
+    border-right-color: var(--yellow);
+    color: #78350f;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin: 18px 0;
+  }
+  .feature {
+    background: var(--card-soft);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .feature:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+  .feature .icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    margin-bottom: 12px;
+    background: var(--primary-soft);
+  }
+  .feature h4 { font-size: 15.5px; margin-bottom: 6px; color: var(--text); }
+  .feature p { font-size: 13.5px; margin-bottom: 0; }
+
+  .pipeline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin: 18px 0;
+    padding: 16px;
+    background: var(--card-soft);
+    border-radius: 12px;
+    border: 1px dashed var(--border);
+  }
+  .pipe-step {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--primary);
+    white-space: nowrap;
+  }
+  .pipe-arrow { color: var(--text-mute); font-weight: 700; }
+
+  .risk-groups { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
+  .risk-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 15px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 13.5px;
+  }
+  .risk-pill.green { background: #d1fae5; color: #065f46; }
+  .risk-pill.yellow { background: #fef3c7; color: #78350f; }
+  .risk-pill.red { background: #fee2e2; color: #991b1b; }
+
+  .auc-box {
+    background: linear-gradient(135deg, #0f172a, #1e3a8a);
+    color: #fff;
+    border-radius: 16px;
+    padding: 28px;
+    text-align: center;
+    margin: 20px 0;
+  }
+  .auc-box .label { font-size: 13px; color: #93c5fd; margin-bottom: 6px; }
+  .auc-box .value {
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1;
+    background: linear-gradient(90deg, #38bdf8, #a5f3fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .auc-box .desc { font-size: 13px; color: #cbd5e1; margin-top: 10px; }
+
+  .arch {
+    background: var(--card-soft);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 16px;
+    margin: 18px 0;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--text-soft);
+    direction: ltr;
+    text-align: left;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  footer {
+    text-align: center;
+    padding: 30px 24px 50px;
+    color: var(--text-mute);
+    font-size: 13px;
+  }
+  footer .divider {
+    width: 50px; height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 4px;
+    margin: 0 auto 16px;
+  }
+
+  .toc {
+    background: var(--card-soft);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 22px;
+  }
+  .toc h4 { font-size: 14px; margin-bottom: 10px; color: var(--text); }
+  .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 4px 20px;
+  }
+  .toc-grid a {
+    color: var(--text-soft);
+    text-decoration: none;
+    font-size: 13px;
+    padding: 3px 0;
+  }
+  .toc-grid a:hover { color: var(--primary); }
+
+  @media (max-width: 640px) {
+    .hero { padding: 55px 18px 75px; }
+    section.card { padding: 24px 18px; border-radius: 14px; }
+    .container { padding: 0 14px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="hero-inner">
+    <span class="badge">گزارش فنی ـ مدیریتی</span>
+    <h1>سامانه تشخیص <span>ریسک بیمه‌ای</span> مسئولیت کارفرما</h1>
+    <p class="lead">
+      زیرساختی داده‌محور برای پاسخ به این پرسش: بر اساس ویژگی‌های قرارداد و سابقه مشتری، احتمال خسارت و سطح ریسک چقدر است؟
+    </p>
+    <div class="hero-stats">
+      <div class="stat"><span class="num">۲۰٬۵۴۰</span><span class="lbl">بیمه‌نامه در داده</span></div>
+      <div class="stat"><span class="num">۳ سال</span><span class="lbl">۱۴۰۱ تا ۱۴۰۳</span></div>
+      <div class="stat"><span class="num">AUC = 0.747</span><span class="lbl">عملکرد مدل روی ۱۴۰۳</span></div>
+      <div class="stat"><span class="num">۶۹٪</span><span class="lbl">پوشش اطلاعات تکمیلی</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- TOC -->
+  <nav class="toc">
+    <h4>فهرست</h4>
+    <div class="toc-grid">
+      <a href="#s1">۱. خلاصه</a>
+      <a href="#s2">۲. داده</a>
+      <a href="#s3">۳. پاکسازی</a>
+      <a href="#s4">۴. Loss Ratio</a>
+      <a href="#s5">۵. تحلیل مشتری</a>
+      <a href="#s6">۶. تحلیل واحد</a>
+      <a href="#s7">۷. اثر متقابل</a>
+      <a href="#s8">۸. Credibility</a>
+      <a href="#s9">۹. مدل ML</a>
+      <a href="#s10">۱۰. نتیجه</a>
+      <a href="#s11">۱۱. ابزارها</a>
+      <a href="#s12">۱۲. معماری</a>
+    </div>
+  </nav>
+
+  <!-- 1 -->
+  <section class="card" id="s1">
+    <div class="section-num">۱</div>
+    <h2>خلاصه مدیریتی</h2>
+
+    <p>ریسک یک قرارداد یا مشتری می‌تواند از دو جهت بررسی شود:</p>
+
+    <div class="grid-2">
+      <div class="feature">
+        <div class="icon">📋</div>
+        <h4>ریسک خودِ قرارداد</h4>
+        <p>بر اساس متراژ، سرمایه، حق‌بیمه، تخفیف، نوع پروژه و شعبه.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">📊</div>
+        <h4>ریسک پیشینه مشتری</h4>
+        <p>بر اساس سابقه قراردادها و خسارت‌های قبلی — در صورت وجود.</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      نبود سابقه مشتری ≠ پرریسک بودن او. برای مشتری جدید، ارزیابی بر اساس خود قرارداد انجام می‌شود.
+    </div>
+
+    <p>هدف پروژه: ایجاد یک <strong>لایه تحلیلی قابل‌اندازه‌گیری</strong> که به کارشناس کمک کند ریسک را با شواهد تاریخی بسنجد — نه جایگزینی تجربه او.</p>
+
+    <div class="pipeline">
+      <span class="pipe-step">داده خام</span>
+      <span class="pipe-arrow">←</span>
+      <span class="pipe-step">پاکسازی</span>
+      <span class="pipe-arrow">←</span>
+      <span class="pipe-step">شاخص ریسک</span>
+      <span class="pipe-arrow">←</span>
+      <span class="pipe-step">تحلیل</span>
+      <span class="pipe-arrow">←</span>
+      <span class="pipe-step">امتیازدهی</span>
+      <span class="pipe-arrow">←</span>
+      <span class="pipe-step">مدل ML</span>
+      <span class="pipe-arrow">←</span>
+      <span class="pipe-step">ابزار کارشناس</span>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="card" id="s2">
+    <div class="section-num">۲</div>
+    <h2>داده اولیه</h2>
+    <p><strong>۲۰٬۵۴۰ بیمه‌نامه</strong> از سه سال مالی (۱۴۰۱ تا ۱۴۰۳) با ۴۳ ستون اطلاعاتی: شناسه، بیمه‌گذار، نماینده، تاریخ‌ها، نوع اسکلت، متراژ، سرمایه، حق‌بیمه، تخفیف، خسارت و شعبه.</p>
+  </section>
+
+  <!-- 3 -->
+  <section class="card" id="s3">
+    <div class="section-num">۳</div>
+    <h2>پاکسازی و آماده‌سازی داده</h2>
+    <ul>
+      <li>یکپارچه‌سازی داده‌های چندساله در یک جدول واحد</li>
+      <li>تبدیل تاریخ‌ها و متغیر «دارای خسارت» به فرمت صحیح</li>
+      <li>استخراج نام و کد از فیلدهای متنی ترکیبی</li>
+      <li>ذخیره نسخه پاکسازی‌شده برای تحلیل‌های قابل تکرار</li>
+    </ul>
+    <div class="callout warn">
+      <strong>محدودیت مهم:</strong> تنها ۶۹٪ رکوردها اطلاعات تکمیلی خسارت/شعبه دارند. ۳۱٪ ناقص — این در تفسیر نتایج لحاظ شده است.
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="card" id="s4">
+    <div class="section-num">۴</div>
+    <h2>شاخص اصلی ریسک: Loss Ratio</h2>
+    <div class="callout">
+      <strong>Loss Ratio = مبلغ خسارت ÷ حق‌بیمه</strong>
+    </div>
+    <p>تنها شمردن تعداد خسارت کافی نیست — یک خسارت بزرگ می‌تواند از ۱۰ خسارت کوچک زیان‌بارتر باشد. به همین دلیل از دو شاخص استفاده می‌شود:</p>
+    <ul>
+      <li><strong>Claim Rate:</strong> نرخ رخداد خسارت</li>
+      <li><strong>Loss Ratio:</strong> نسبت مبلغ خسارت به حق‌بیمه</li>
+    </ul>
+  </section>
+
+  <!-- 5 -->
+  <section class="card" id="s5">
+    <div class="section-num">۵</div>
+    <h2>تحلیل مشتریان</h2>
+    <p>اطلاعات سطح بیمه‌نامه به <strong>پروفایل مشتری</strong> تبدیل شد: تعداد قرارداد، مجموع حق‌بیمه، تعداد و مبلغ خسارت، نرخ و نسبت خسارت، تعداد سال‌های فعالیت و میانگین تخفیف.</p>
+    <div class="callout">
+      تغییر دیدگاه: از «ریسک یک بیمه‌نامه» به «سابقه ریسک یک مشتری».
+    </div>
+    <p>تحلیل تمرکز (Lorenz-style) نشان می‌دهد تعداد کمی مشتری بخش بزرگی از حق‌بیمه را ایجاد می‌کنند — پس ریسک همین مشتریان اهمیت ویژه دارد.</p>
+  </section>
+
+  <!-- 6 -->
+  <section class="card" id="s6">
+    <div class="section-num">۶</div>
+    <h2>تحلیل واحدهای صدور</h2>
+    <p>همین شاخص‌ها در سطح نماینده/واحد صدور محاسبه شد. نتیجه: عملکرد واحدها فقط با «میزان فروش» سنجیده نشود — <strong>فروش در کنار کیفیت ریسک</strong> دیده شود.</p>
+  </section>
+
+  <!-- 7 -->
+  <section class="card" id="s7">
+    <div class="section-num">۷</div>
+    <h2>اثر متقابل عوامل (Interaction)</h2>
+    <p>اثر یک عامل به‌تنهایی معنا ندارد؛ در ترکیب با عامل دیگر می‌تواند کاملاً متفاوت شود.</p>
+    <ul>
+      <li><strong>شعبه × حجم حق‌بیمه:</strong> رابطه حجم و ریسک در همه شعب یکسان نیست.</li>
+      <li><strong>تخفیف × متراژ:</strong> اثر تخفیف در پروژه‌های کوچک و بزرگ متفاوت است.</li>
+    </ul>
+    <div class="callout">
+      مدل نهایی باید ترکیب عوامل را یاد بگیرد، نه فقط <code>متراژ → ریسک</code>.
+    </div>
+  </section>
+
+  <!-- 8 -->
+  <section class="card" id="s8">
+    <div class="section-num">۸</div>
+    <h2>Credibility — حل مشکل مشتریان کم‌سابقه</h2>
+    <p>مشتری با ۱ قرارداد و یک خسارت، نباید به اندازه مشتری با ۵۰ قرارداد پرریسک دیده شود. سابقه ۵۰ قرارداد شواهد بسیار بیشتری است.</p>
+    <div class="callout">
+      <strong>روش Bühlmann:</strong> هرچه سابقه مشتری بیشتر، تجربه خودش وزن بیشتر. هرچه کمتر، امتیاز به میانگین کل پرتفوی نزدیک‌تر می‌شود.
+    </div>
+    <p>در نتیجه، مشتری جدید به دلیل یک اتفاق تصادفی، بیش از حد پرریسک اعلام نمی‌شود.</p>
+  </section>
+
+  <!-- 9 -->
+  <section class="card" id="s9">
+    <div class="section-num">۹</div>
+    <h2>مدل یادگیری ماشین</h2>
+    <p><strong>مدل:</strong> HistGradientBoostingClassifier — برای داده‌های جدولی بیمه‌ای، با توانایی یادگیری روابط غیرخطی و ترکیبی.</p>
+    <p><strong>ورودی‌ها:</strong> حق‌بیمه، سرمایه، متراژ، تخفیف، شعبه، نوع اسکلت.</p>
+    <p><strong>خروجی:</strong> احتمال وقوع خسارت (مثلاً 0.10 / 0.50 / 0.85) — پایه‌ای برای تبدیل به رتبه سبز/زرد/قرمز یا مقیاس ۰ تا ۱۰۰۰.</p>
+
+    <h3>ارزیابی زمانی</h3>
+    <p>آموزش روی ۱۴۰۱ و ۱۴۰۲، آزمون روی ۱۴۰۳ — شبیه‌سازی واقعی «گذشته → آینده» به جای تقسیم تصادفی داده.</p>
+
+    <div class="auc-box">
+      <div class="label">نتیجه روی داده آزمون ۱۴۰۳</div>
+      <div class="value">AUC = 0.747</div>
+      <div class="desc">توانایی قابل‌قبول در تفکیک پرریسک از کم‌ریسک — اثبات امکان‌پذیری، نه مدل نهایی</div>
+    </div>
+  </section>
+
+  <!-- 10 -->
+  <section class="card" id="s10">
+    <div class="section-num">۱۰</div>
+    <h2>امتیاز مشتری</h2>
+    <div class="callout">
+      <strong>امتیاز مشتری = میانگین وزنی امتیاز بیمه‌نامه‌های او (وزن = حق‌بیمه)</strong>
+    </div>
+    <p>ساده، سریع، سازگار با امتیاز قرارداد. برای مشتری با یک قرارداد، امتیاز مشتری همان امتیاز قرارداد است.</p>
+  </section>
+
+  <!-- 11 -->
+  <section class="card" id="s11">
+    <div class="section-num">۱۱</div>
+    <h2>ابزارهای کاربردی</h2>
+    <div class="grid-2">
+      <div class="feature">
+        <div class="icon">👤</div>
+        <h4>Customer Risk Explorer</h4>
+        <p>با ورود کد ملی: تعداد قرارداد، حق‌بیمه، خسارت، نسبت خسارت و سطح ریسک (🟢 🟡 🔴) نسبت به میانگین پرتفوی.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">🏢</div>
+        <h4>Unit / Branch Explorer</h4>
+        <p>بررسی عملکرد و ریسک هر واحد صدور: حجم پرتفوی، حق‌بیمه، خسارت، نسبت خسارت و سطح ریسک.</p>
+      </div>
+    </div>
+    <p>هر دو ابزار با <strong>Gradio</strong> ساخته شده‌اند. همچنین گزارش‌های Wide شعب، رتبه‌بندی واحدها و Excelهای رنگ‌بندی‌شده تولید شده است.</p>
+  </section>
+
+  <!-- 12 -->
+  <section class="card" id="s12">
+    <div class="section-num">۱۲</div>
+    <h2>معماری سامانه نهایی</h2>
+    <div class="arch">
+              داده‌های بیمه‌نامه
+                     │
+                     ▼
+          پاکسازی و یکپارچه‌سازی
+                     │
+                     ▼
+             ساخت شاخص‌های ریسک
+                     │
+         ┌───────────┴───────────┐
+         ▼                       ▼
+   تحلیل آماری             مدل ML
+         │                       │
+         ▼                       ▼
+ریسک مشتری/نماینده       ریسک هر قرارداد
+         │                       │
+         └───────────┬───────────┘
+                     ▼
+             Risk Scoring Layer
+                     │
+                     ▼
+          گروه‌بندی/رتبه ریسک
+                     │
+                     ▼
+         تصمیم کارشناسی/صدور
+    </div>
+    <p>در نسخه نهایی، این معماری می‌تواند به یک سرویس واقعی متصل شود تا هنگام پیشنهاد قرارداد جدید، امتیاز ریسک به صورت خودکار محاسبه شود.</p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="divider"></div>
+  <p>گزارش فنی ـ مدیریتی | سامانه تشخیص ریسک بیمه‌ای مسئولیت کارفرما</p>
+</footer>
+
+</body>
+</html>
